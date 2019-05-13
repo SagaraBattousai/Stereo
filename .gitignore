@@ -1,1 +1,7 @@
+*.avi
+
+*.swp
+
 __pycache__/
+
+sandbox.py

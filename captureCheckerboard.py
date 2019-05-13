@@ -2,37 +2,74 @@ import numpy as np
 import cv2
 
 def startCapturing(camera):
-    if not camera.isOpened():
-        camera.open()
+  if not camera.isOpened():
+    camera.open()
 
-leftCamera = cv2.VideoCapture(2)
-rightCamera = cv2.VideoCapture(3)
+def captureCheckerboard(leftIndex=2, rightIndex=3):
 
-startCapturing(leftCamera)
-startCapturing(rightCamera)
-
-captureCount = 1
-
-while True:
+  leftCamera = cv2.VideoCapture(leftIndex)
+  rightCamera = cv2.VideoCapture(rightIndex)
+  
+  startCapturing(leftCamera)
+  startCapturing(rightCamera)
+  
+  captureCount = 1
+  
+  while True:
     lRet, lFrame = leftCamera.read()
     rRet, rFrame = rightCamera.read()
-
-    lGray = cv2.cvtColor(lFrame, cv2.COLOR_BGR2GRAY)
-    rGray = cv2.cvtColor(rFrame, cv2.COLOR_BGR2GRAY)
-
-    grayz = np.hstack((lGray, rGray))
-
-    cv2.imshow('lFrame', lGray)
-    cv2.imshow('rFrame', rGray)
+  
+    # lGray = cv2.cvtColor(lFrame, cv2.COLOR_BGR2GRAY)
+    # rGray = cv2.cvtColor(rFrame, cv2.COLOR_BGR2GRAY)
+  
+    grayz = np.hstack((lFrame, rFrame))
+  
     cv2.imshow('Framez', grayz)
-
-    if cv2.waitKey(1) & 0xFF == ord(' '):
-        cv2.imwrite('left_capture' + str(captureCount) + ".png", lGray)
-        cv2.imwrite('right_capture' + str(captureCount) + ".png", rGray)
-        captureCount += 1
+  
+    key = cv2.waitKey(1)
+  
+    if key & 0xFF == ord(' '):
+      cv2.imwrite('left_capture' + str(captureCount) + ".png", lFrame)
+      cv2.imwrite('right_capture' + str(captureCount) + ".png", rFrame)
+      captureCount += 1
     
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+    if key & 0xFF == ord('q'):
+      break
+  
+  cap.release()
+  cv2.destroyAllWindows()
 
-cap.release()
-cv2.destroyAllWindows()
+def captureCheckerboardAnd(func, leftIndex=2, rightIndex=3):
+
+  leftCamera = cv2.VideoCapture(leftIndex)
+  rightCamera = cv2.VideoCapture(rightIndex)
+  
+  startCapturing(leftCamera)
+  startCapturing(rightCamera)
+  
+  captureCount = 1
+  
+  while True:
+    lRet, lFrame = leftCamera.read()
+    rRet, rFrame = rightCamera.read()
+  
+    captureCount = func(lFrame, rFrame, captureCount)
+  
+    key = cv2.waitKey(1)
+  
+    # if key & 0xFF == ord(' '):
+    #   cv2.imwrite('left_capture' + str(captureCount) + ".png", lFrame)
+    #   cv2.imwrite('right_capture' + str(captureCount) + ".png", rFrame)
+    #   captureCount += 1
+    
+    if key & 0xFF == ord('q'):
+      break
+  
+  cap.release()
+  cv2.destroyAllWindows()
+
+if __name__ == "__main__":
+  captureCheckerboard()
+
+
+
